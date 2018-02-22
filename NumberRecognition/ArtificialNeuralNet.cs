@@ -15,15 +15,30 @@ namespace NumberRecognition
         public List<Node> OutputNodes;
         public int correctAnswer = 0;
         public int givenAnswer = 0;
-        public float random;
-        public float reward;
+        public double random;
+        public double reward;
 
-        public ArtificialNeuralNet(List<Node> i, List<Node> h, List<Node> o)
+        public ArtificialNeuralNet()
         {
-
+            Random rand = new Random(Guid.NewGuid().GetHashCode());
+            InputNodes = new List<Node>();
+            HiddenNodes = new List<Node>();
+            OutputNodes = new List<Node>();
+            for (int x =0; x < 64; x++)
+            {
+                InputNodes.Add(new Node(0, 0));
+            }
+            for (int x = 0; x < 16; x++)
+            {
+                HiddenNodes.Add(new Node(rand.NextDouble(), rand.NextDouble()));
+            }
+            for (int x = 0; x < 10; x++)
+            {
+                OutputNodes.Add(new Node(rand.NextDouble(), rand.NextDouble()));
+            }
         }
 
-        public void newInputs(List<float> inputs)
+        public void newInputs(List<int> inputs)
         {
 
         }
@@ -31,7 +46,7 @@ namespace NumberRecognition
         public void processInputs()
         {
             //
-            float largestValue = OutputNodes[0].value;
+            double largestValue = OutputNodes[0].value;
             int largestIndex = 0;
             for(int x = 1; x < OutputNodes.Count; x++)
             {
@@ -61,9 +76,9 @@ namespace NumberRecognition
 
         }
 
-        private float sigmoid(double x)
+        private double sigmoid(double x)
         {
-            return 1.0f / (1.0f + (float)Math.Exp(-x));
+            return 1.0f / (1.0f + Math.Exp(-x));
         }
 
         public void saveWeights()

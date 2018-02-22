@@ -8,11 +8,11 @@ namespace NumberRecognition
 {
     class Node
     {
-        public float value;
-        public float weight;
-        public float bias;
+        public double value;
+        public double weight;
+        public double bias;
 
-        public Node(float w, float b)
+        public Node(double w, double b)
         {
             value = 0;
             weight = w;
