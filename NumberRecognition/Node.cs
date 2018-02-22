@@ -9,10 +9,14 @@ namespace NumberRecognition
     class Node
     {
         public float value;
+        public float weight;
+        public float bias;
 
-        public Node(float v)
+        public Node(float w, float b)
         {
-            value = v;
+            value = 0;
+            weight = w;
+            bias = b;
         }
     }
 }

@@ -39,6 +39,7 @@ namespace NumberRecognition
             string testFile = "optdigits_test.txt";
             string trainingFile = "optdigits_train.txt";
             List<List<int>> inputs = new List<List<int>>();
+
             Console.WriteLine("Train the ANN or use existing weights? (train/proceed)");
             bool proceed = false;
             while (proceed == false)

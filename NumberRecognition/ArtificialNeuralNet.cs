@@ -28,9 +28,9 @@ namespace NumberRecognition
 
         }
 
-        public bool processInputs()
+        public void processInputs()
         {
-
+            //
             float largestValue = OutputNodes[0].value;
             int largestIndex = 0;
             for(int x = 1; x < OutputNodes.Count; x++)
@@ -49,7 +49,6 @@ namespace NumberRecognition
             {
                 wrongAnswer(givenAnswer, correctAnswer);
             }
-            return false;
         }
 
         private void rightAnswer(int x)
