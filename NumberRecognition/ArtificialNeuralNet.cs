@@ -26,16 +26,27 @@ namespace NumberRecognition
             OutputNodes = new List<Node>();
             for (int x =0; x < 64; x++)
             {
-                InputNodes.Add(new Node(0, 0));
+                InputNodes.Add(new Node(new List<double>(), 0));
             }
             for (int x = 0; x < 16; x++)
             {
-                HiddenNodes.Add(new Node(rand.NextDouble(), rand.NextDouble()));
+                List<double> weights = new List<double>();
+                for (int y = 0; y < 64; y++)
+                {
+                    weights.Add(rand.NextDouble());
+                }
+                HiddenNodes.Add(new Node(weights, rand.NextDouble()));
             }
             for (int x = 0; x < 10; x++)
             {
-                OutputNodes.Add(new Node(rand.NextDouble(), rand.NextDouble()));
+                List<double> weights = new List<double>();
+                for (int y = 0; y < 15; y++)
+                {
+                    weights.Add(rand.NextDouble());
+                }
+                OutputNodes.Add(new Node(weights, rand.NextDouble()));
             }
+            int z = 0;
         }
 
         public void newInputs(List<int> inputs)

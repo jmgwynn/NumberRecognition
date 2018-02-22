@@ -9,10 +9,10 @@ namespace NumberRecognition
     class Node
     {
         public double value;
-        public double weight;
+        public List<double> weight;
         public double bias;
 
-        public Node(double w, double b)
+        public Node(List<double> w, double b)
         {
             value = 0;
             weight = w;
