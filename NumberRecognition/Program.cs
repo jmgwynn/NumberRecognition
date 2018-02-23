@@ -22,7 +22,7 @@ namespace NumberRecognition
                 List<int> currentLine = new List<int>();
                 subStringEnd = fullText.IndexOf("\n");
                 temp = fullText.Substring(0, subStringEnd);
-                for(int z = 0; z < 64; z++)
+                for (int z = 0; z < 64; z++)
                 {
                     int indexOfComma = temp.IndexOf(",");
                     currentLine.Add(Int32.Parse(temp.Substring(0, temp.IndexOf(","))));
@@ -41,22 +41,61 @@ namespace NumberRecognition
             List<List<int>> inputs = new List<List<int>>();
             ArtificialNeuralNet ANN = new ArtificialNeuralNet();
 
-            Console.WriteLine("Train the ANN or use existing weights? (train/proceed)");
+            Console.WriteLine("Create a new Artifical Neural Net, or load a saved one? (new/load)");
             bool proceed = false;
-            while (proceed == false)
+            while (!proceed)
+            {
+                string response = Console.ReadLine();
+                if (response.ToLower() == "new")
+                {
+                    proceed = true;
+                }
+                else if (response.ToLower() == "load")
+                {
+                    ANN.loadWeightsAndBiases();
+                    proceed = true;
+                }
+                else if (response.ToLower() == "exit")
+                {
+                    Environment.Exit(0);
+                }
+                else
+                {
+                    Console.WriteLine("Response not recognized.");
+                }
+            }
+            proceed = false;
+            Console.WriteLine("Train the ANN or test it? (train/test)");
+            while (!proceed)
             {
                 string response = Console.ReadLine();
                 if (response.ToLower() == "train")
                 {
                     Console.WriteLine("Parsing training document");
                     inputs = parseInputs(trainingFile);
-                    proceed = true;
+                    foreach (List<int> l in inputs)
+                    {
+                        ANN.processInputs(l);
+                    }
+                    Console.WriteLine("Train again, or test? (train/test)");
                 }
-                else if (response.ToLower() == "proceed")
+                else if (response.ToLower() == "test")
                 {
                     Console.WriteLine("Parsing test document");
                     inputs = parseInputs(testFile);
-                    proceed = true;
+                    foreach (List<int> l in inputs)
+                    {
+                        ANN.processInputs(l);
+                    }
+                    Console.WriteLine("Train more, test more, save values? (train/test/save)");
+                }
+                else if (response.ToLower() == "save")
+                {
+                    ANN.saveWeightsAndBiases();
+                }
+                else if (response.ToLower() == "exit")
+                {
+                    Environment.Exit(0);
                 }
                 else
                 {
