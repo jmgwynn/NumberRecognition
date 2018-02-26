@@ -38,7 +38,12 @@ namespace NumberRecognition
         {
             string testFile = "optdigits_test.txt";
             string trainingFile = "optdigits_train.txt";
-            List<List<int>> inputs = new List<List<int>>();
+            List<List<int>> trainingInputs = new List<List<int>>();
+            List<List<int>> testInputs = new List<List<int>>();
+            Console.WriteLine("Parsing training document");
+            trainingInputs = parseInputs(trainingFile);
+            Console.WriteLine("Parsing test document");
+            testInputs = parseInputs(testFile);
             ArtificialNeuralNet ANN = new ArtificialNeuralNet();
 
             Console.WriteLine("Create a new Artifical Neural Net, or load a saved one? (new/load)");
@@ -71,9 +76,8 @@ namespace NumberRecognition
                 string response = Console.ReadLine();
                 if (response.ToLower() == "train")
                 {
-                    Console.WriteLine("Parsing training document");
-                    inputs = parseInputs(trainingFile);
-                    foreach (List<int> l in inputs)
+                    Console.WriteLine("Training");
+                    foreach (List<int> l in trainingInputs)
                     {
                         ANN.processInputs(l);
                     }
@@ -81,9 +85,7 @@ namespace NumberRecognition
                 }
                 else if (response.ToLower() == "test")
                 {
-                    Console.WriteLine("Parsing test document");
-                    inputs = parseInputs(testFile);
-                    foreach (List<int> l in inputs)
+                    foreach (List<int> l in testInputs)
                     {
                         ANN.processInputs(l);
                     }

@@ -55,8 +55,8 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="text files\optdigits_test.txt" />
-    <Content Include="text files\optdigits_train.txt" />
+    <Content Include="optdigits_test.txt" />
+    <Content Include="optdigits_train.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
