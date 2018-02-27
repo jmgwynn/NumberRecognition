@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System.IO;
 
@@ -15,15 +12,14 @@ namespace NumberRecognition
         private List<Node> OutputNodes;
         private int correctAnswer;
         private int givenAnswer;
-        private double reward;
-        private int numberCorrect = 0;
+        public int numberCorrect = 0;
+        private int numOfHidden = 30;
 
-        public ArtificialNeuralNet()
+        public ArtificialNeuralNet(Random rand)
         {
             /*Initialization of the ANN.
 			Weights and Biases are initialized as random values between -1 and 1.
 			*/
-            Random rand = new Random(Guid.NewGuid().GetHashCode());
             InputNodes = new List<Node>();
             HiddenNodes = new List<Node>();
             OutputNodes = new List<Node>();
@@ -31,7 +27,7 @@ namespace NumberRecognition
             {
                 InputNodes.Add(new Node(new List<double>(), 0));
             }
-            for (int x = 0; x < 15; x++)
+            for (int x = 0; x < numOfHidden; x++)
             {
                 List<double> weights = new List<double>();
                 for (int y = 0; y < 64; y++)
@@ -43,7 +39,7 @@ namespace NumberRecognition
             for (int x = 0; x < 10; x++)
             {
                 List<double> weights = new List<double>();
-                for (int y = 0; y < 15; y++)
+                for (int y = 0; y < numOfHidden; y++)
                 {
                     weights.Add(((rand.NextDouble() * 2) - 1));
                 }
@@ -51,7 +47,7 @@ namespace NumberRecognition
             }
         }
 
-        public void processInputs(List<int> inputs)
+        public void processInputs(List<int> inputs, bool train)
         {
             for (int x = 0; x < 64; x++)
             {
@@ -77,25 +73,48 @@ namespace NumberRecognition
                 }
             }
             givenAnswer = largestIndex;
-            if (givenAnswer == correctAnswer)
+            
+            if (train)
             {
-                rightAnswer(givenAnswer);
+                backPropagate();
             }
             else
             {
-                wrongAnswer(givenAnswer, correctAnswer);
+                if (givenAnswer == correctAnswer)
+                {
+                    numberCorrect++;
+                }
             }
-            Console.WriteLine("Given Answer: " + givenAnswer + ". Correct Answer: " + correctAnswer + ".");
+            //Console.WriteLine("Given Answer: " + givenAnswer + ". Correct Answer: " + correctAnswer + ".");
         }
 
-        private void rightAnswer(int x)
+        private void backPropagate()
         {
-            numberCorrect++;
-        }
-
-        private void wrongAnswer(int x, int y)
-        {
-
+            double learningRate = 0.1252;
+            double globalError = 0.0;
+            for(int x = 0; x < 10; x++)
+            {
+                double desiredOutput = 0.0;
+                if(correctAnswer == x)
+                {
+                    desiredOutput = 1.0;
+                }
+                globalError = sigmoidPrime(OutputNodes[x].value) * (desiredOutput - OutputNodes[x].value);
+                for(int y = 0; y < numOfHidden; y++)
+                {
+                    OutputNodes[x].weights[y] += (globalError * HiddenNodes[y].value * learningRate);
+                }
+                OutputNodes[x].bias += globalError * learningRate;
+                for(int y = 0; y < numOfHidden; y++)
+                {
+                    double localError = sigmoidPrime(HiddenNodes[y].value) * globalError * OutputNodes[x].weights[y];
+                    HiddenNodes[y].bias += localError * learningRate;
+                    for(int z = 0; z< 64; z++)
+                    {
+                        HiddenNodes[y].weights[z] += (localError * InputNodes[z].value * learningRate);
+                    }
+                }
+            }
         }
 
         private void calculateValue(Node n)
@@ -110,7 +129,7 @@ namespace NumberRecognition
             }
             else
             {
-                for (int x = 0; x < 15; x++)
+                for (int x = 0; x < numOfHidden; x++)
                 {
                     calculatedValue -= (n.weights[x] * HiddenNodes[x].value);
                 }
@@ -122,6 +141,11 @@ namespace NumberRecognition
         private double sigmoid(double x)
         {
             return 1.0f / (1.0f + Math.Exp(x));
+        }
+
+        private double sigmoidPrime(double x)
+        {
+            return sigmoid(x) * (1 - sigmoid(x));
         }
 
         public void saveWeightsAndBiases()

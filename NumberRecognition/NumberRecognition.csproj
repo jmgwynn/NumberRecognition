@@ -55,8 +55,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="optdigits_names.txt" />
     <Content Include="optdigits_test.txt" />
     <Content Include="optdigits_train.txt" />
+    <Content Include="results.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

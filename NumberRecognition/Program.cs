@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 
 namespace NumberRecognition
 {
-    class Program
+    static class Program
     {
         public static List<List<int>> parseInputs(string path)
         //parses the input file into a 2D list of ints to feed into the ANN one at a time.
@@ -34,6 +31,20 @@ namespace NumberRecognition
             }
             return inputs;
         }
+
+        public static void Shuffle<T>(this IList<T> list, Random rng)
+        {
+            int n = list.Count;
+            while (n > 1)
+            {
+                n--;
+                int k = rng.Next(n + 1);
+                T value = list[k];
+                list[k] = list[n];
+                list[n] = value;
+            }
+        }
+
         static void Main(string[] args)
         {
             string testFile = "optdigits_test.txt";
@@ -44,64 +55,39 @@ namespace NumberRecognition
             trainingInputs = parseInputs(trainingFile);
             Console.WriteLine("Parsing test document");
             testInputs = parseInputs(testFile);
-            ArtificialNeuralNet ANN = new ArtificialNeuralNet();
+            Random rand = new Random(Guid.NewGuid().GetHashCode());
+            ArtificialNeuralNet ANN = new ArtificialNeuralNet(rand);
+            //ANN.loadWeightsAndBiases();
 
-            Console.WriteLine("Create a new Artifical Neural Net, or load a saved one? (new/load)");
-            bool proceed = false;
-            while (!proceed)
+            int epoch = 0;
+            foreach (List<int> l in testInputs)
             {
-                string response = Console.ReadLine();
-                if (response.ToLower() == "new")
-                {
-                    proceed = true;
-                }
-                else if (response.ToLower() == "load")
-                {
-                    ANN.loadWeightsAndBiases();
-                    proceed = true;
-                }
-                else if (response.ToLower() == "exit")
-                {
-                    Environment.Exit(0);
-                }
-                else
-                {
-                    Console.WriteLine("Response not recognized.");
-                }
+                ANN.processInputs(l, false);
             }
-            proceed = false;
-            Console.WriteLine("Train the ANN or test it? (train/test)");
-            while (!proceed)
+            Console.WriteLine("Epoch -1. Accuracy: " + (ANN.numberCorrect / 1797.0));
+            ANN.numberCorrect = 0;
+            while (epoch < 30)
             {
-                string response = Console.ReadLine();
-                if (response.ToLower() == "train")
+                Shuffle<List<int>>(trainingInputs, rand);
+                foreach (List<int> l in trainingInputs)
                 {
-                    Console.WriteLine("Training");
-                    foreach (List<int> l in trainingInputs)
-                    {
-                        ANN.processInputs(l);
-                    }
-                    Console.WriteLine("Train again, or test? (train/test)");
+                    ANN.processInputs(l, true);
                 }
-                else if (response.ToLower() == "test")
+                foreach (List<int> l in testInputs)
                 {
-                    foreach (List<int> l in testInputs)
-                    {
-                        ANN.processInputs(l);
-                    }
-                    Console.WriteLine("Train more, test more, save values? (train/test/save)");
+                    ANN.processInputs(l, false);
                 }
-                else if (response.ToLower() == "save")
+                Console.WriteLine("Epoch "+epoch+". Accuracy: " + (ANN.numberCorrect/1797.0));
+                ANN.numberCorrect = 0;
+                epoch++;
+            }
+            string input = Console.ReadLine();
+            bool loop = true;
+            while (loop)
+            {
+                if(input.ToLower() == "exit")
                 {
-                    ANN.saveWeightsAndBiases();
-                }
-                else if (response.ToLower() == "exit")
-                {
-                    Environment.Exit(0);
-                }
-                else
-                {
-                    Console.WriteLine("Response not recognized.");
+                    loop = false;
                 }
             }
         }
